@@ -1,3 +1,5 @@
+when_modified:
+  autoapply: true
 drift:
   enabled: true
   schedules:
