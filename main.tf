@@ -23,3 +23,19 @@ resource "null_resource" "marker" {
 output "revision" {
   value = null_resource.marker.triggers.revision
 }
+
+import {
+  to = terraform_data.adopted
+  id = "adopted-1"
+}
+
+resource "terraform_data" "adopted" {}
+
+import {
+  to = terraform_data.adopted_changed
+  id = "adopted-2"
+}
+
+resource "terraform_data" "adopted_changed" {
+  input = "changed"
+}
