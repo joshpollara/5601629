@@ -1,6 +1,8 @@
 automerge:
   enabled: true
   require_explicit_apply: true
+when_modified:
+  autoapply: true
 dirs:
   database:
     when_modified:
