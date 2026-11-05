@@ -1,3 +1,3 @@
 resource "terraform_data" "base" {
-  input = "7"
+  input = "8"
 }
