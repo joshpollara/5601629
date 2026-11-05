@@ -1,8 +1,6 @@
-apply_requirements:
-  checks:
-    - tag_query: ''
-      apply_after_merge:
-        enabled: true
+automerge:
+  enabled: true
+  require_explicit_apply: true
 stacks:
   names:
     base:
