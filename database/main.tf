@@ -1,1 +1,3 @@
-# Depends on base; no resources, so its plan has no changes.
+resource "terraform_data" "database" {
+  input = "1"
+}
