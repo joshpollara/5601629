@@ -1,13 +1,9 @@
-automerge:
+drift:
   enabled: true
-  require_explicit_apply: true
-stacks:
-  names:
-    base:
-      tag_query: 'dir:base'
-    database:
-      tag_query: 'dir:database'
-      rules:
-        modified_by:
-          - base
-        auto_apply: true
+  schedules:
+    default:
+      tag_query: ''
+      schedule: hourly
+destination_branches:
+  - branch: main
+  - branch: 'chore-*'
