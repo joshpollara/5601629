@@ -11,7 +11,7 @@ terraform {
 
 variable "revision" {
   type    = string
-  default = "7"
+  default = "oss-qs-2"
 }
 
 resource "null_resource" "marker" {
