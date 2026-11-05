@@ -5,6 +5,8 @@ stacks:
   names:
     base:
       tag_query: 'dir:base'
+      rules:
+        auto_apply: true
     database:
       tag_query: 'dir:database'
       rules:
