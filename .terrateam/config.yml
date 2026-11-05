@@ -1,8 +1,7 @@
-when_modified:
-  autoapply: true
-drift:
+automerge:
   enabled: true
-  schedules:
-    default:
-      tag_query: ''
-      schedule: hourly
+  require_explicit_apply: true
+dirs:
+  database:
+    when_modified:
+      depends_on: dir:base
