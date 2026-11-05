@@ -1,7 +1,13 @@
 automerge:
   enabled: true
   require_explicit_apply: true
-dirs:
-  database:
-    when_modified:
-      depends_on: dir:base
+stacks:
+  names:
+    base:
+      tag_query: 'dir:base'
+    database:
+      tag_query: 'dir:database'
+      rules:
+        modified_by:
+          - base
+        auto_apply: true
