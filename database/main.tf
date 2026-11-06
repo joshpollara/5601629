@@ -7,7 +7,7 @@ variable "note" {
 }
 
 resource "terraform_data" "database" {
-  input = "3"
+  input = "4"
 }
 
 output "settings" {
