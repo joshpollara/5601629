@@ -19,7 +19,8 @@ dirs:
         tags: [database, workflow-db]
         when_modified:
           file_patterns: [database/**/*, modules/**]
-          depends_on: dir:base
+          depends_on:
+            tag_query: dir:base
   envs/dev:
     workspaces:
       default:
