@@ -40,7 +40,7 @@ dirs:
         when_modified:
           file_patterns: [app/*.tf, modules/**]
           depends_on:
-            tag_query: network or order-group-1
+            tag_query: network or order-group-0 or order-group-1
             prune_on_no_change: true
   envs/dev:
     workspaces:
