@@ -1,3 +1,3 @@
 resource "terraform_data" "envs_dev" {
-  input = "1"
+  input = "4"
 }
