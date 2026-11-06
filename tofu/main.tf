@@ -1,3 +1,3 @@
 resource "terraform_data" "tofu" {
-  input = "6"
+  input = "30"
 }
