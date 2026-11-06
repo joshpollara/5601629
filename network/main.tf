@@ -1,3 +1,3 @@
 resource "terraform_data" "network" {
-  input = "2"
+  input = "3"
 }
