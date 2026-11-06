@@ -5,6 +5,7 @@ engine:
   version: 1.5.7
 when_modified:
   file_patterns: []
+  autoplan_draft_pr: false
 dirs:
   app:
     workspaces:
@@ -62,12 +63,7 @@ apply_requirements:
       enabled: false
     status_checks:
       enabled: false
-    require_ready_for_review_pr: false
   - tag_query: ''
-    require_ready_for_review_pr: false
-automerge:
-  enabled: true
-  merge_strategy: squash
 lock_policy: none
 drift:
   enabled: true
