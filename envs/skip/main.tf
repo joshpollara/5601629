@@ -1,3 +1,3 @@
 resource "terraform_data" "skip" {
-  input = "1"
+  input = "2"
 }
