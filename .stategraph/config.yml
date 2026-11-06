@@ -1,0 +1,77 @@
+# Converted from digger.yml by digger-to-stategraph.py 1.0.0.
+# Read the conversion report before you commit this file.
+engine:
+  name: terraform
+  version: 1.5.7
+when_modified:
+  file_patterns: []
+dirs:
+  app:
+    workspaces:
+      default:
+        tags: [app]
+        when_modified:
+          file_patterns: [app/**/*]
+          depends_on:
+            tag_query: dir:net
+            prune_on_no_change: true
+  gen/one:
+    workspaces:
+      default:
+        tags: [gen_one]
+        when_modified:
+          file_patterns: [gen/one/**/*]
+  net:
+    workspaces:
+      default:
+        tags: [net]
+        when_modified:
+          file_patterns: [net/**/*, '!net/docs/**']
+  tofu:
+    workspaces:
+      default:
+        tags: [tofu, workflow-tofuwf]
+        when_modified:
+          file_patterns: [tofu/**/*]
+  ws:
+    workspaces:
+      dev:
+        tags: [ws-dev]
+        when_modified:
+          file_patterns: [ws/**/*]
+      prod:
+        tags: [ws-prod]
+        when_modified:
+          file_patterns: [ws/**/*]
+workflows:
+- tag_query: workflow-tofuwf
+  engine:
+    name: tofu
+    version: 1.8.5
+  environment: digger-e2e
+  plan:
+  - type: init
+  - type: run
+    cmd: [sh, '${TERRATEAM_ROOT}/.stategraph/scripts/digger-tofuwf-plan-1.sh']
+  - type: plan
+apply_requirements:
+  create_pending_apply_check: false
+  checks:
+  - tag_query: tofu
+    merge_conflicts:
+      enabled: false
+    status_checks:
+      enabled: false
+    require_ready_for_review_pr: false
+  - tag_query: ''
+    require_ready_for_review_pr: false
+automerge:
+  enabled: true
+  merge_strategy: squash
+lock_policy: none
+drift:
+  enabled: true
+  schedules:
+    drift:
+      schedule: hourly
+      tag_query: net or app or ws-dev or tofu or gen_one
