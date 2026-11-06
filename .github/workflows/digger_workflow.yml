@@ -25,6 +25,8 @@ jobs:
           digger-spec: ${{ inputs.spec }}
           setup-terraform: true
           terraform-version: v1.5.7
+          setup-terragrunt: true
+          terragrunt-version: v0.73.7
         env:
           GITHUB_CONTEXT: ${{ toJson(github) }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
