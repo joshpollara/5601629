@@ -13,58 +13,49 @@ dirs:
         tags: [base]
         when_modified:
           file_patterns: [base/**/*]
-  database:
-    workspaces:
-      default:
-        tags: [database, workflow-db]
-        when_modified:
-          file_patterns: [database/**/*, modules/**]
-          depends_on:
-            tag_query: dir:base
-  envs/dev:
-    workspaces:
-      default:
-        tags: [envs_dev]
-        when_modified:
-          file_patterns: [envs/dev/**/*]
-          autoapply: true
-  envs/prod:
-    workspaces:
-      default:
-        tags: [envs_prod]
-        when_modified:
-          file_patterns: [envs/prod/**/*]
-          autoapply: true
 workflows:
-- tag_query: workflow-db
+- tag_query: workflow-tgwf-terragrunt
+  engine:
+    name: terragrunt
+    version: 0.73.7
+    tf_version: 1.5.7
   plan:
   - type: env
-    name: GREETING
-    cmd: [printenv, DIGGER_E2E_GREETING]
-    sensitive: true
-  - type: env
-    name: TF_VAR_tier
-    cmd: [printf, '%s', gold]
+    name: TG_E2E
+    cmd: [printf, '%s', from-digger]
   - type: init
   - type: run
-    cmd: [bash, -eo, pipefail, '${TERRATEAM_ROOT}/.stategraph/scripts/digger-db-plan-1.sh']
+    cmd: [bash, -eo, pipefail, '${TERRATEAM_ROOT}/.stategraph/scripts/digger-tgwf-plan-1.sh']
   - type: plan
-    extra_args: [-var, note=from-digger]
   apply:
   - type: env
-    name: GREETING
-    cmd: [printenv, DIGGER_E2E_GREETING]
-    sensitive: true
-  - type: env
-    name: TF_VAR_tier
-    cmd: [printf, '%s', gold]
+    name: TG_E2E
+    cmd: [printf, '%s', from-digger]
   - type: init
   - type: apply
-apply_requirements:
-  checks:
-  - tag_query: database
-    approved:
-      enabled: true
-      any_of: ['*']
-      any_of_count: 1
-  - tag_query: ''
+- tag_query: terragrunt
+  engine:
+    name: terragrunt
+    version: 0.73.7
+    tf_version: 1.5.7
+config_builder:
+  enabled: true
+  script: |
+    terragrunt-config-builder | python3 -c 'import json, sys
+    roots = ["live"]
+    root_tags = [["live", "workflow-tgwf-terragrunt"]]
+    c = json.load(sys.stdin)
+    def under(d, r):
+        return r == "." or d == r or d.startswith(r + "/")
+    dirs = {}
+    for d, v in c.get("dirs", {}).items():
+        if "terragrunt" in v.get("tags", []):
+            if not any(under(d, r) for r in roots):
+                continue
+            for r, t in root_tags:
+                if under(d, r) and t not in v["tags"]:
+                    v["tags"].append(t)
+        dirs[d] = v
+    c["dirs"] = dirs
+    json.dump(c, sys.stdout)
+    '
