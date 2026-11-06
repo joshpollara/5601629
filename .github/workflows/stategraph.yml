@@ -1,4 +1,3 @@
-```yaml
 name: 'Stategraph'
 on:
   workflow_dispatch:
