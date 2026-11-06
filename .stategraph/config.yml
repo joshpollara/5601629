@@ -3,197 +3,27 @@
 engine:
   name: terraform
   version: 1.5.7
-hooks:
-  all:
-    pre:
-    - type: run
-      cmd: [sh, '${TERRATEAM_ROOT}/.stategraph/scripts/atlantis-hook-pre-0.sh']
-      ignore_errors: true
-    post:
-    - type: run
-      cmd: [sh, -c, echo post-hook]
-      run_on: always
-  plan:
-    pre:
-    - type: run
-      cmd: [sh, -c, echo plan-only-hook]
-      ignore_errors: true
 when_modified:
-  file_patterns:
-  - ${DIR}/*.tf
-  - ${DIR}/*.tf.json
-  - ${DIR}/*.tfvars
-  - ${DIR}/*.tfvars.json
-  - ${DIR}/*.tofu
-  - ${DIR}/*.tofu.json
-  - ${DIR}/terragrunt.hcl
-  - ${DIR}/.terraform.lock.hcl
+  file_patterns: []
   autoplan_draft_pr: false
-dirs:
-  '**/modules/**':
-    when_modified:
-      file_patterns: []
-  app:
-    workspaces:
-      default:
-        tags: [app, order-group-2, workflow-custom]
-        when_modified:
-          file_patterns: [app/*.tf, modules/**]
-          depends_on:
-            tag_query: network or order-group-0 or order-group-1
-            prune_on_no_change: true
-  envs/dev:
-    workspaces:
-      default:
-        tags: [order-group-0, workflow-default]
-        when_modified:
-          file_patterns:
-          - envs/dev/**/*.tf*
-          - envs/dev/**/*.tofu
-          - envs/dev/**/*.tofu.json
-          - envs/dev/**/terragrunt.hcl
-          - envs/dev/**/.terraform.lock.hcl
-  envs/prod:
-    workspaces:
-      default:
-        tags: [order-group-0, workflow-default]
-        when_modified:
-          file_patterns:
-          - envs/prod/**/*.tf*
-          - envs/prod/**/*.tofu
-          - envs/prod/**/*.tofu.json
-          - envs/prod/**/terragrunt.hcl
-          - envs/prod/**/.terraform.lock.hcl
-  legacy/**:
-    when_modified:
-      file_patterns: []
-  multi:
-    workspaces:
-      dev:
-        tags: [multi-dev, order-group-0, workflow-default]
-        when_modified:
-          file_patterns:
-          - multi/**/*.tf*
-          - multi/**/*.tofu
-          - multi/**/*.tofu.json
-          - multi/**/terragrunt.hcl
-          - multi/**/.terraform.lock.hcl
-      prod:
-        tags: [multi-prod, order-group-0, workflow-default]
-        when_modified:
-          file_patterns:
-          - multi/**/*.tf*
-          - multi/**/*.tofu
-          - multi/**/*.tofu.json
-          - multi/**/terragrunt.hcl
-          - multi/**/.terraform.lock.hcl
-  network:
-    workspaces:
-      default:
-        tags: [network, order-group-1, workflow-default-tofu]
-        when_modified:
-          file_patterns:
-          - network/**/*.tf*
-          - network/**/*.tofu
-          - network/**/*.tofu.json
-          - network/**/terragrunt.hcl
-          - network/**/.terraform.lock.hcl
-          depends_on:
-            tag_query: order-group-0
-            prune_on_no_change: true
 workflows:
-- tag_query: workflow-default-tofu
+- tag_query: terragrunt
   engine:
-    name: tofu
-    version: 1.8.5
-  plan:
-  - type: init
-  - type: plan
-  - type: env
-    name: CONFTEST_POLICY
-    cmd: [printf, '%s', '${TERRATEAM_ROOT}/policy']
-  - type: conftest
-    gate:
-      token: no-forbidden
-      name: no-forbidden
-      any_of: ['user:joshpollara']
-      any_of_count: 1
-- tag_query: workflow-custom
+    name: terragrunt
+    tf_version: 1.5.7
   plan:
   - type: env
-    name: STAGE
-    cmd: [printf, '%s', review]
-  - type: env
-    name: FROM_CMD
-    cmd: [sh, '${TERRATEAM_ROOT}/.stategraph/scripts/atlantis-custom-plan-1.sh']
-  - type: env
-    method: source
-    cmd: ['${TERRATEAM_ROOT}/.stategraph/scripts/atlantis-custom-plan-2.sh']
-  - type: init
-  - type: run
-    cmd: [sh, '${TERRATEAM_ROOT}/.stategraph/scripts/atlantis-custom-plan-4.sh']
-    visible_on: always
+    name: TG_E2E
+    cmd: [printf, '%s', from-atlantis]
   - type: plan
-    extra_args: [-var, 'ws=${TERRATEAM_WORKSPACE}']
-  - type: run
-    cmd: [bash, '${TERRATEAM_ROOT}/.stategraph/scripts/atlantis-custom-plan-6.sh']
-    visible_on: always
-  - type: env
-    name: CONFTEST_POLICY
-    cmd: [printf, '%s', '${TERRATEAM_ROOT}/policy']
-  - type: conftest
-    gate:
-      token: no-forbidden
-      name: no-forbidden
-      any_of: ['user:joshpollara']
-      any_of_count: 1
-  apply:
-  - type: run
-    cmd: [sh, -c, echo hidden]
-  - type: init
-  - type: apply
-    extra_args: [-var, 'ws=${TERRATEAM_WORKSPACE}']
-- tag_query: workflow-default
-  plan:
-  - type: init
-  - type: plan
-  - type: env
-    name: CONFTEST_POLICY
-    cmd: [printf, '%s', '${TERRATEAM_ROOT}/policy']
-  - type: conftest
-    gate:
-      token: no-forbidden
-      name: no-forbidden
-      any_of: ['user:joshpollara']
-      any_of_count: 1
-- tag_query: ''
-  plan:
-  - type: init
-  - type: plan
-  - type: env
-    name: CONFTEST_POLICY
-    cmd: [printf, '%s', '${TERRATEAM_ROOT}/policy']
-  - type: conftest
-    gate:
-      token: no-forbidden
-      name: no-forbidden
-      any_of: ['user:joshpollara']
-      any_of_count: 1
+config_builder:
+  enabled: true
+  script: terragrunt-config-builder
 apply_requirements:
   checks:
-  - tag_query: app
-    approved:
-      enabled: true
-      any_of: ['*']
-      any_of_count: 1
+  - tag_query: ''
     merge_conflicts:
       enabled: false
     status_checks:
       enabled: false
     require_ready_for_review_pr: false
-  - tag_query: ''
-    require_ready_for_review_pr: false
-automerge:
-  enabled: true
-  merge_strategy: squash
-  delete_branch: true
