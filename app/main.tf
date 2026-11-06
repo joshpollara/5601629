@@ -3,7 +3,7 @@ variable "ws" {
 }
 
 resource "terraform_data" "app" {
-  input = "1"
+  input = "2"
 }
 
 output "ws" {
