@@ -1,3 +1,3 @@
 resource "terraform_data" "discovered" {
-  input = "1"
+  input = "forbidden"
 }
