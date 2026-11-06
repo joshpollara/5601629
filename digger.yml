@@ -1,35 +1,20 @@
 projects:
   - name: base
     dir: base
-  - name: database
-    dir: database
-    depends_on: [base]
-    workflow: db
-    include_patterns: ["../modules/**"]
-    apply_requirements: [approved, mergeable]
-
 generate_projects:
   blocks:
-    - block_name: envs
-      include: "envs/*"
-      exclude: "envs/skip"
-      workflow: envs
-
+    - block_name: live
+      terragrunt: true
+      root_dir: "live/"
+      workflow: tgwf
 workflows:
-  db:
+  tgwf:
     env_vars:
       commands:
-        - name: GREETING
-          value_from: GREETING_SRC
-        - name: TF_VAR_tier
-          value: gold
+        - name: TG_E2E
+          value: from-digger
     plan:
       steps:
         - init
-        - run: echo "db plan for $PROJECT_NAME in $(basename "$PWD")"
-        - plan:
-            extra_args: ["-var", "note=from-digger"]
-  envs:
-    workflow_configuration:
-      on_pull_request_pushed: ["digger plan"]
-      on_commit_to_default: ["digger apply"]
+        - run: echo "tg plan in $(basename "$PWD") with $TG_E2E"
+        - plan
