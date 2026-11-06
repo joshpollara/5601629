@@ -1,0 +1,54 @@
+version: 3
+automerge: true
+delete_source_branch_on_merge: true
+autodiscover:
+  mode: enabled
+  ignore_paths:
+    - legacy/**
+projects:
+  - name: network
+    dir: network
+    execution_order_group: 1
+    terraform_distribution: opentofu
+    terraform_version: 1.8.5
+  - name: app
+    dir: app
+    execution_order_group: 2
+    depends_on: [network]
+    workflow: custom
+    apply_requirements: [approved]
+    autoplan:
+      when_modified: ["*.tf", "../modules/**"]
+  - dir: envs/*
+  - name: multi-dev
+    dir: multi
+    workspace: dev
+  - name: multi-prod
+    dir: multi
+    workspace: prod
+workflows:
+  custom:
+    plan:
+      steps:
+        - env:
+            name: STAGE
+            value: review
+        - env:
+            name: FROM_CMD
+            command: echo "$WORKSPACE-$(echo cmd)"
+        - multienv: sh ../scripts/gen-env.sh
+        - init
+        - run: echo "proj=$PROJECT_NAME ws=$WORKSPACE rel=$REPO_REL_DIR stage=$STAGE from=$FROM_CMD a=$A b=$B"
+        - plan:
+            extra_args: ["-var", "ws=$WORKSPACE"]
+        - run:
+            command: test -s "$SHOWFILE" && echo "showfile-ok $(basename "$DIR")"
+            shell: bash
+            shellArgs: -c
+    apply:
+      steps:
+        - run:
+            command: echo hidden
+            output: hide
+        - apply:
+            extra_args: ["-var", "ws=$WORKSPACE"]
