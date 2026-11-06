@@ -1,3 +1,3 @@
 resource "terraform_data" "legacy_old" {
-  input = "1"
+  input = "2"
 }
