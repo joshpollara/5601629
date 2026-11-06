@@ -1,3 +1,3 @@
 resource "terraform_data" "prod" {
-  input = "1"
+  input = "2"
 }
