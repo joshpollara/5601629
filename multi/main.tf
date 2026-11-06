@@ -1,3 +1,3 @@
 resource "terraform_data" "multi" {
-  input = "1"
+  input = "2"
 }
