@@ -1,0 +1,40 @@
+auto_merge: true
+auto_merge_strategy: squash
+pr_locks: false
+allow_draft_prs: true
+disable_digger_apply_status_check: true
+traverse_to_nested_projects: false
+dependency_configuration:
+  mode: soft
+projects:
+  - name: net
+    dir: net
+    exclude_patterns: ["./docs/**"]
+  - name: app
+    dir: app
+    depends_on: [net]
+  - name: ws-dev
+    dir: ws
+    workspace: dev
+  - name: ws-prod
+    dir: ws
+    workspace: prod
+    drift_detection: false
+  - name: tofu
+    dir: tofu
+    opentofu: true
+    workflow: tofuwf
+    workflow_file: digger_env.yml
+generate_projects:
+  include: "gen/**"
+  exclude: "gen/skip"
+workflows:
+  tofuwf:
+    plan:
+      steps:
+        - init
+        - run: 'echo "shell=$(readlink /proc/$$/exe) dir=$(basename "$PWD")"'
+          shell: sh
+        - plan
+    workflow_configuration:
+      skip_merge_check: true
