@@ -11,7 +11,7 @@ terraform {
 
 variable "revision" {
   type    = string
-  default = "8"
+  default = "7"
 }
 
 resource "null_resource" "marker" {
