@@ -27,6 +27,7 @@ resource "terraform_data" "network" {
     zone     = jsondecode(file(var.config_path)).zone
     secret   = sha256(file("${dirname(var.config_path)}/secret.txt"))
     stack    = var.spacelift_stack_id
+    version  = "2"
   }
 }
 
