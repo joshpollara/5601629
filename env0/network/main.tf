@@ -32,6 +32,7 @@ resource "terraform_data" "network" {
     labels   = var.labels
     note     = var.note
     region   = var.region
+    version  = "2"
   }
 }
 
