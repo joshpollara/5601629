@@ -35,6 +35,7 @@ resource "terraform_data" "network" {
     password    = sha256(var.db_password)
     extra       = var.extra
     secret_env  = sha256(var.secret_env)
+    note        = "v2"
   }
 }
 
