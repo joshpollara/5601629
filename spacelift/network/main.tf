@@ -1,3 +1,4 @@
+# migrated from Spacelift
 variable "cidr" {
   type = string
 }
