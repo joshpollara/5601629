@@ -1,3 +1,4 @@
+# migrated from Spacelift
 variable "region" {
   type = string
 }
