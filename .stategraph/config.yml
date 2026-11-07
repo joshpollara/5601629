@@ -1,0 +1,125 @@
+# Converted from Spacelift account terrateamio by spacelift-to-stategraph.py 1.0.0.
+# Read the conversion report before you commit this file.
+engine:
+  name: stategraph
+  tf_version: 1.5.7
+when_modified:
+  file_patterns: []
+  autoplan_draft_pr: true
+dirs:
+  spacelift/app:
+    workspaces:
+      sg-migration-e2e-app-dev:
+        tags: [sg-migration-e2e-app-dev, app, sg-e2e]
+        when_modified:
+          file_patterns:
+          - spacelift/app/**
+          - spacelift/modules/**
+          - .stategraph/spacelift/env/spacelift/app/sg-migration-e2e-app-dev.plan.env
+          - .stategraph/spacelift/env/spacelift/app/sg-migration-e2e-app-dev.apply.env
+          autoapply: true
+      sg-migration-e2e-app-prod:
+        tags: [sg-migration-e2e-app-prod, app, prod, sg-e2e]
+        when_modified:
+          file_patterns:
+          - spacelift/app/**
+          - spacelift/modules/**
+          - .stategraph/spacelift/env/spacelift/app/sg-migration-e2e-app-prod.plan.env
+          - .stategraph/spacelift/env/spacelift/app/sg-migration-e2e-app-prod.apply.env
+          depends_on:
+            tag_query: (dir:spacelift/network and workspace:default)
+  spacelift/network:
+    workspaces:
+      default:
+        tags: [sg-migration-e2e-network, network]
+        when_modified:
+          file_patterns:
+          - spacelift/network/**
+          - .stategraph/spacelift/env/spacelift/network/default.plan.env
+          - .stategraph/spacelift/env/spacelift/network/default.apply.env
+workflows:
+- tag_query: sg-migration-e2e-app-dev
+  plan:
+  - type: env
+    method: source
+    cmd:
+    - ${TERRATEAM_ROOT}/.stategraph/spacelift/env/${TERRATEAM_DIR}/${TERRATEAM_WORKSPACE}.plan.env
+  - type: run
+    cmd: [sh, -c, echo context-hook]
+    visible_on: always
+  - type: init
+  - type: plan
+  apply:
+  - type: env
+    method: source
+    cmd:
+    - ${TERRATEAM_ROOT}/.stategraph/spacelift/env/${TERRATEAM_DIR}/${TERRATEAM_WORKSPACE}.apply.env
+  - type: run
+    cmd: [sh, -c, echo context-hook]
+    visible_on: always
+  - type: init
+  - type: apply
+- tag_query: sg-migration-e2e-app-prod
+  engine:
+    name: stategraph
+    tf_cmd: tofu
+    tf_version: 1.8.8
+  plan:
+  - type: env
+    method: source
+    cmd:
+    - ${TERRATEAM_ROOT}/.stategraph/spacelift/env/${TERRATEAM_DIR}/${TERRATEAM_WORKSPACE}.plan.env
+  - type: run
+    cmd: [sh, -c, echo context-hook]
+    visible_on: always
+  - type: init
+  - type: plan
+  apply:
+  - type: env
+    method: source
+    cmd:
+    - ${TERRATEAM_ROOT}/.stategraph/spacelift/env/${TERRATEAM_DIR}/${TERRATEAM_WORKSPACE}.apply.env
+  - type: run
+    cmd: [sh, -c, echo context-hook]
+    visible_on: always
+  - type: init
+  - type: apply
+- tag_query: ''
+  plan:
+  - type: env
+    method: source
+    cmd:
+    - ${TERRATEAM_ROOT}/.stategraph/spacelift/env/${TERRATEAM_DIR}/${TERRATEAM_WORKSPACE}.plan.env
+    sensitive: true
+  - type: run
+    cmd:
+    - sh
+    - ${TERRATEAM_ROOT}/.stategraph/scripts/spacelift-sg-migration-e2e-network-before-init-0.sh
+    visible_on: always
+  - type: init
+  - type: plan
+  - type: run
+    cmd:
+    - sh
+    - ${TERRATEAM_ROOT}/.stategraph/scripts/spacelift-sg-migration-e2e-network-after-plan-0.sh
+    visible_on: always
+  apply:
+  - type: env
+    method: source
+    cmd:
+    - ${TERRATEAM_ROOT}/.stategraph/spacelift/env/${TERRATEAM_DIR}/${TERRATEAM_WORKSPACE}.apply.env
+    sensitive: true
+  - type: run
+    cmd:
+    - sh
+    - ${TERRATEAM_ROOT}/.stategraph/scripts/spacelift-sg-migration-e2e-network-before-init-0.sh
+    visible_on: always
+  - type: init
+  - type: apply
+apply_requirements:
+  checks:
+  - tag_query: ''
+    apply_after_merge:
+      enabled: true
+    require_ready_for_review_pr: false
+destination_branches: [main]
