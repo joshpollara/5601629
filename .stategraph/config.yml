@@ -12,12 +12,18 @@ dirs:
       sg-migration-e2e-app-dev:
         tags: [sg-migration-e2e-app-dev, sg-e2e-app, tfc-1.5.7]
         when_modified:
-          file_patterns: [app/**]
+          file_patterns:
+          - app/**
+          - .stategraph/tfc/vars/app/sg-migration-e2e-app-dev.tfvars
+          - .stategraph/tfc/vars/app/sg-migration-e2e-app-dev.env
           autoapply: true
       sg-migration-e2e-app-prod:
         tags: [sg-migration-e2e-app-prod, sg-e2e-app, tfc-1.5.5]
         when_modified:
-          file_patterns: [app/**]
+          file_patterns:
+          - app/**
+          - .stategraph/tfc/vars/app/sg-migration-e2e-app-prod.tfvars
+          - .stategraph/tfc/vars/app/sg-migration-e2e-app-prod.env
           depends_on:
             tag_query: (dir:network and workspace:default)
   network:
@@ -25,7 +31,10 @@ dirs:
       default:
         tags: [sg-migration-e2e-network]
         when_modified:
-          file_patterns: [network/**]
+          file_patterns:
+          - network/**
+          - .stategraph/tfc/vars/network/default.tfvars
+          - .stategraph/tfc/vars/network/default.env
 workflows:
 - tag_query: tfc-1.5.7
   plan:
