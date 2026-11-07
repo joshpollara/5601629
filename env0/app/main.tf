@@ -1,3 +1,4 @@
+# migrated from env0
 variable "region" {
   type = string
 }
