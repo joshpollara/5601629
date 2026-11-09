@@ -1,13 +1,13 @@
-drift:
+automerge:
   enabled: true
-  schedules:
-    default:
-      schedule: daily
+  require_explicit_apply: true
+stacks:
+  names:
+    base:
       tag_query: 'dir:base'
-      reconcile: true
-      restart_on_change: false
-hooks:
-  apply:
-    pre:
-    - type: run
-      cmd: ['sleep', '60']
+    database:
+      tag_query: 'dir:database'
+      rules:
+        modified_by:
+          - base
+        auto_apply: true
