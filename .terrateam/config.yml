@@ -2,7 +2,7 @@ drift:
   enabled: true
   schedules:
     default:
-      schedule: hourly
+      schedule: daily
       tag_query: 'dir:base'
       reconcile: true
 hooks:
