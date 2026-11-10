@@ -6,7 +6,7 @@ resource "terraform_data" "brand_a" {
 }
 
 resource "terraform_data" "brand_b" {
-  triggers_replace = "b-v1"
+  triggers_replace = "b-v2"
   provisioner "local-exec" {
     command = "sleep 30"
   }
