@@ -35,4 +35,3 @@ jobs:
         env:
           SECRETS_CONTEXT: ${{ toJson(secrets) }}
           VARIABLES_CONTEXT: ${{ toJson(vars) }}
-# rig probe
