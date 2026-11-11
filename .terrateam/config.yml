@@ -1,13 +1,11 @@
-automerge:
+config_builder:
   enabled: true
-  require_explicit_apply: true
-stacks:
-  names:
-    base:
-      tag_query: 'dir:base'
-    database:
-      tag_query: 'dir:database'
-      rules:
-        modified_by:
-          - base
-        auto_apply: true
+  script: |
+    cat
+workflows:
+  - tag_query: ""
+    apply:
+      - type: init
+      - type: run
+        cmd: ["sleep", "180"]
+      - type: apply
