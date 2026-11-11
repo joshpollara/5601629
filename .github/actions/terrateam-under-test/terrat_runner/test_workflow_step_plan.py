@@ -1,0 +1,404 @@
+import json
+import unittest
+from types import SimpleNamespace
+from unittest import mock
+
+import engine_custom
+import engine_stategraph
+import engine_tf
+import workflow_step_plan
+
+
+class PlanStepTest(unittest.TestCase):
+    def test_store_plan_none_defaults_unsafe_apply_without_plan_false(self):
+        state = SimpleNamespace()
+        with mock.patch('workflow_step_plan._store_plan_data') as store_plan_data:
+            store_plan_data.return_value = (True, '')
+
+            result = workflow_step_plan._store_plan_none(
+                state,
+                {'method': 'none'},
+                'dev',
+                'default',
+                True)
+
+        self.assertEqual(result, (True, ''))
+        store_plan_data.assert_called_once_with(
+            state,
+            {
+                'method': 'none',
+                'unsafe_apply_without_plan': False,
+                'version': 1,
+            },
+            'dev',
+            'default',
+            True)
+
+    def test_store_plan_none_preserves_unsafe_apply_without_plan(self):
+        state = SimpleNamespace()
+        with mock.patch('workflow_step_plan._store_plan_data') as store_plan_data:
+            store_plan_data.return_value = (True, '')
+
+            result = workflow_step_plan._store_plan_none(
+                state,
+                {
+                    'method': 'none',
+                    'unsafe_apply_without_plan': True,
+                },
+                'dev',
+                'default',
+                True)
+
+        self.assertEqual(result, (True, ''))
+        store_plan_data.assert_called_once_with(
+            state,
+            {
+                'method': 'none',
+                'unsafe_apply_without_plan': True,
+                'version': 1,
+            },
+            'dev',
+            'default',
+            True)
+
+    def _visible_on_of_failed_run(self, config):
+        # A plan that fails returns its payload straight away, which is the shortest path through
+        # run() that still builds one.
+        engine = SimpleNamespace(
+            name='tf',
+            plan=lambda _state, _config: (False, False, 'stdout', 'stderr'),
+        )
+        state = SimpleNamespace(engine=engine)
+
+        return workflow_step_plan.run(state, config).payload['visible_on']
+
+    def test_run_defaults_visible_on_to_always(self):
+        self.assertEqual(self._visible_on_of_failed_run({}), 'always')
+
+    def test_run_takes_visible_on_from_the_step_config(self):
+        self.assertEqual(self._visible_on_of_failed_run({'visible_on': 'success'}), 'success')
+
+
+class ResourceSummaryTest(unittest.TestCase):
+    PLAN_JSON = {
+        'resource_changes': [
+            {'change': {'actions': ['create']}},
+            {'change': {'actions': ['create']}},
+            {'change': {'actions': ['update']}},
+            {'change': {'actions': ['delete']}},
+            {'change': {'actions': ['create', 'delete']}},
+            {'change': {'actions': ['delete', 'create']}},
+            {'change': {'actions': ['no-op']}},
+            {'change': {'actions': ['read']}},
+            {'change': {}},
+            {},
+        ],
+    }
+
+    def test_counts_are_split_per_action_with_replacements_in_their_own_bucket(self):
+        self.assertEqual(
+            engine_tf._resource_summary_from_plan_json(self.PLAN_JSON),
+            {'created': 2, 'updated': 1, 'deleted': 1, 'replaced': 2, 'imported': 0})
+
+    def test_imports_count_alongside_their_action(self):
+        plan_json = {
+            'resource_changes': [
+                {'change': {'actions': ['no-op'], 'importing': {'id': 'a'}}},
+                {'change': {'actions': ['update'], 'importing': {'id': 'b'}}},
+                {'change': {'actions': ['create', 'delete'], 'importing': {'id': 'c'}}},
+                {'change': {'actions': ['no-op'], 'importing': {'identity': {'name': 'd'}}}},
+                {'change': {'actions': ['create'], 'importing': None}},
+                {'change': {'actions': ['update']}},
+            ],
+        }
+        self.assertEqual(
+            engine_tf._resource_summary_from_plan_json(plan_json),
+            {'created': 1, 'updated': 2, 'deleted': 0, 'replaced': 1, 'imported': 4})
+
+    def test_plan_without_resource_changes_counts_zeros(self):
+        self.assertEqual(
+            engine_tf._resource_summary_from_plan_json({}),
+            {'created': 0, 'updated': 0, 'deleted': 0, 'replaced': 0, 'imported': 0})
+        self.assertEqual(
+            engine_tf._resource_summary_from_plan_json({'resource_changes': []}),
+            {'created': 0, 'updated': 0, 'deleted': 0, 'replaced': 0, 'imported': 0})
+
+    def test_unparseable_plan_json_is_none(self):
+        self.assertIsNone(engine_tf._resource_summary_from_plan_json(None))
+        self.assertIsNone(engine_tf._resource_summary_from_plan_json([]))
+
+    def test_engine_resource_summary_returns_none_when_show_json_fails(self):
+        engine = engine_tf.Engine('tf', 'terraform')
+        state = SimpleNamespace(path='foo', workflow={'engine': {'name': 'tf'}})
+        config = {}
+
+        with mock.patch.object(engine, 'diff_json') as diff_json:
+            diff_json.return_value = (False, 'stdout', 'stderr')
+            self.assertIsNone(engine.resource_summary(state, config))
+
+    def test_engine_resource_summary_counts_plan_json(self):
+        engine = engine_tf.Engine('tf', 'terraform')
+        state = SimpleNamespace(path='foo', workflow={'engine': {'name': 'tf'}})
+        config = {}
+
+        with mock.patch.object(engine, 'diff_json') as diff_json:
+            diff_json.return_value = (True, self.PLAN_JSON)
+            self.assertEqual(
+                engine.resource_summary(state, config),
+                {'created': 2, 'updated': 1, 'deleted': 1, 'replaced': 2, 'imported': 0})
+
+    def _run_with_summary(self, engine):
+        state = SimpleNamespace(
+            engine=engine,
+            workflow={'engine': {'name': 'tf'}, 'storage': {'plans': {'method': 'none'}}},
+            env={
+                'TERRATEAM_DIR': 'foo',
+                'TERRATEAM_WORKSPACE': 'default',
+                'TERRATEAM_PLAN_FILE': '/tmp/plan.out',
+            })
+
+        with mock.patch('workflow_step_plan._store_plan') as store_plan:
+            store_plan.return_value = (True, '')
+            with mock.patch('workflow_step_plan.os.path.exists') as exists:
+                exists.return_value = True
+                return workflow_step_plan.run(state, {})
+
+    def test_run_attaches_resource_summary_to_the_payload(self):
+        engine = SimpleNamespace(
+            name='tf',
+            plan=lambda _state, _config: (True, True, 'stdout', 'stderr'),
+            diff=lambda _state, _config: (True, 'diff', ''),
+            resource_summary=lambda _state, _config: {'created': 1,
+                                                      'updated': 0,
+                                                      'deleted': 0,
+                                                      'replaced': 0})
+
+        result = self._run_with_summary(engine)
+        self.assertEqual(result.payload['resource_summary'],
+                         {'created': 1, 'updated': 0, 'deleted': 0, 'replaced': 0})
+
+    def test_run_omits_resource_summary_when_the_engine_returns_none(self):
+        engine = SimpleNamespace(
+            name='tf',
+            plan=lambda _state, _config: (True, True, 'stdout', 'stderr'),
+            diff=lambda _state, _config: (True, 'diff', ''),
+            resource_summary=lambda _state, _config: None)
+
+        result = self._run_with_summary(engine)
+        self.assertNotIn('resource_summary', result.payload)
+
+    def test_run_skips_resource_summary_when_there_are_no_changes(self):
+        resource_summary = mock.Mock()
+        engine = SimpleNamespace(
+            name='tf',
+            plan=lambda _state, _config: (True, False, 'stdout', 'stderr'),
+            diff=lambda _state, _config: (True, 'diff', ''),
+            resource_summary=resource_summary)
+
+        result = self._run_with_summary(engine)
+        resource_summary.assert_not_called()
+        self.assertNotIn('resource_summary', result.payload)
+
+
+class PlanLogOutputTest(unittest.TestCase):
+    def _run_tf_plan(self, config):
+        engine = engine_tf.Engine('tf', 'terraform')
+        state = SimpleNamespace(
+            engine=engine,
+            path='foo',
+            workflow={'engine': {'name': 'tf'}, 'storage': {'plans': {'method': 'none'}}},
+            env={
+                'TERRATEAM_DIR': 'foo',
+                'TERRATEAM_WORKSPACE': 'default',
+                'TERRATEAM_PLAN_FILE': '/tmp/plan.out',
+            })
+
+        with mock.patch('engine_tf.cmd.run_with_output') as run, \
+             mock.patch('workflow_step_plan._store_plan') as store_plan, \
+             mock.patch('workflow_step_plan.os.path.exists') as exists:
+            run.return_value = (SimpleNamespace(returncode=0), '', '')
+            store_plan.return_value = (True, '')
+            exists.return_value = True
+            result = workflow_step_plan.run(state, config)
+
+        self.assertTrue(result.success)
+        return [c[0][1] for c in run.call_args_list]
+
+    def test_log_output_false_reaches_every_plan_command(self):
+        calls = self._run_tf_plan({'mode': 'fast-and-loose', 'log_output': False})
+
+        self.assertEqual([c['cmd'][1] for c in calls], ['plan', 'plan', 'show'])
+        for c in calls:
+            self.assertIs(c['log_output'], False)
+
+    def test_log_output_defaults_to_true(self):
+        calls = self._run_tf_plan({})
+
+        self.assertEqual([c['cmd'][1] for c in calls], ['plan', 'show'])
+        for c in calls:
+            self.assertIs(c['log_output'], True)
+
+    def test_show_json_is_never_logged(self):
+        engine = engine_tf.Engine('tf', 'terraform')
+        state = SimpleNamespace(path='foo', workflow={'engine': {'name': 'tf'}})
+
+        with mock.patch('engine_tf.cmd.run_with_output') as run:
+            run.return_value = (SimpleNamespace(returncode=0), '{}', '')
+            engine.diff_json(state, {'log_output': True})
+
+        self.assertIs(run.call_args[0][1]['log_output'], False)
+
+
+class CustomEngineResourceSummaryTest(unittest.TestCase):
+    SUMMARY = {'created': 1, 'updated': 2, 'deleted': 3, 'replaced': 4}
+
+    def _engine(self, **overrides):
+        kwargs = {
+            'init_args': None,
+            'apply_args': None,
+            'diff_args': None,
+            'diff_json_args': None,
+            'resource_summary_args': None,
+            'plan_args': None,
+            'unsafe_apply_args': None,
+            'outputs_args': None,
+        }
+        kwargs.update(overrides)
+
+        return engine_custom.make(**kwargs)
+
+    def _state(self):
+        return SimpleNamespace(path='foo', workflow={'engine': {'name': 'custom'}})
+
+    def test_runs_the_summary_program_and_returns_its_json(self):
+        engine = self._engine(resource_summary_args=['summary', '--json'])
+
+        with mock.patch('engine_custom.cmd.run_with_output') as run:
+            run.return_value = (SimpleNamespace(returncode=0),
+                                json.dumps(self.SUMMARY), '')
+
+            self.assertEqual(engine.resource_summary(self._state(), {}), self.SUMMARY)
+
+        self.assertEqual(run.call_args[0][1]['cmd'], ['summary', '--json'])
+
+    def test_returns_none_when_no_summary_program_is_set(self):
+        engine = self._engine()
+
+        with mock.patch('engine_custom.cmd.run_with_output') as run:
+            self.assertIsNone(engine.resource_summary(self._state(), {}))
+
+        run.assert_not_called()
+
+    def test_returns_none_when_the_summary_program_fails(self):
+        engine = self._engine(resource_summary_args=['summary'])
+
+        with mock.patch('engine_custom.cmd.run_with_output') as run:
+            run.return_value = (SimpleNamespace(returncode=1), 'out', 'err')
+
+            self.assertIsNone(engine.resource_summary(self._state(), {}))
+
+    def test_returns_none_when_the_summary_program_prints_bad_json(self):
+        engine = self._engine(resource_summary_args=['summary'])
+
+        with mock.patch('engine_custom.cmd.run_with_output') as run:
+            run.return_value = (SimpleNamespace(returncode=0), 'not json', '')
+
+            self.assertIsNone(engine.resource_summary(self._state(), {}))
+
+    def test_returns_none_when_the_summary_program_prints_a_non_object(self):
+        engine = self._engine(resource_summary_args=['summary'])
+
+        with mock.patch('engine_custom.cmd.run_with_output') as run:
+            run.return_value = (SimpleNamespace(returncode=0), '[1, 2]', '')
+
+            self.assertIsNone(engine.resource_summary(self._state(), {}))
+
+
+class StategraphEnginePlanTest(unittest.TestCase):
+    def _plan_cmd(self, config):
+        state = SimpleNamespace(path='foo', workspace='default')
+        with mock.patch('engine_stategraph.cmd.run_with_output') as run:
+            run.return_value = (SimpleNamespace(returncode=2), 'out', 'err')
+            engine_stategraph.plan(state, config)
+
+        return run.call_args[0][1]['cmd']
+
+    def test_extra_args_default_skips_costs_and_security(self):
+        self.assertEqual(self._plan_cmd({})[-2:], ['--skip-costs', '--skip-security'])
+
+    def test_extra_args_in_the_config_replace_the_default(self):
+        plan_cmd = self._plan_cmd({'extra_args': ['--foo']})
+        self.assertEqual(plan_cmd[-1], '--foo')
+        self.assertNotIn('--skip-costs', plan_cmd)
+        self.assertNotIn('--skip-security', plan_cmd)
+
+
+class StategraphEngineDiffTest(unittest.TestCase):
+    PLAN_TEXT = '\n'.join([
+        '  # null_resource.foo will be created',
+        '  + resource "null_resource" "foo" {',
+        '      + id = (known after apply)',
+        '    }',
+    ])
+
+    def _state(self):
+        return SimpleNamespace(path='foo', workflow={'engine': {'name': 'stategraph'}})
+
+    def test_formats_the_output_of_stategraph_tf_show_as_a_diff(self):
+        with mock.patch('engine_stategraph.cmd.run_with_output') as run:
+            run.return_value = (SimpleNamespace(returncode=0), self.PLAN_TEXT, '')
+
+            self.assertEqual(
+                engine_stategraph.diff(self._state(), {}),
+                (True,
+                 '\n'.join([
+                     '  # null_resource.foo will be created',
+                     '+   resource "null_resource" "foo" {',
+                     '+       id = (known after apply)',
+                     '    }',
+                 ]),
+                 ''))
+
+        self.assertEqual(run.call_args[0][1]['cmd'],
+                         ['stategraph', 'tf', 'show', '${TERRATEAM_PLAN_FILE}'])
+
+    def test_returns_the_output_unformatted_when_stategraph_tf_show_fails(self):
+        with mock.patch('engine_stategraph.cmd.run_with_output') as run:
+            run.return_value = (SimpleNamespace(returncode=1), '  + out', 'err')
+
+            self.assertEqual(engine_stategraph.diff(self._state(), {}),
+                             (False, '  + out', 'err'))
+
+
+class StategraphEngineResourceSummaryTest(unittest.TestCase):
+    def _state(self):
+        return SimpleNamespace(path='foo', workflow={'engine': {'name': 'stategraph'}})
+
+    def test_counts_the_plan_json_from_stategraph_tf_show(self):
+        with mock.patch('engine_stategraph.cmd.run_with_output') as run:
+            run.return_value = (SimpleNamespace(returncode=0),
+                                json.dumps(ResourceSummaryTest.PLAN_JSON), '')
+
+            self.assertEqual(
+                engine_stategraph.resource_summary(self._state(), {}),
+                {'created': 2, 'updated': 1, 'deleted': 1, 'replaced': 2, 'imported': 0})
+
+        self.assertEqual(run.call_args[0][1]['cmd'],
+                         ['stategraph', 'tf', 'show', '--json', '${TERRATEAM_PLAN_FILE}'])
+        self.assertFalse(run.call_args[0][1]['log_output'])
+
+    def test_returns_none_when_stategraph_tf_show_fails(self):
+        with mock.patch('engine_stategraph.cmd.run_with_output') as run:
+            run.return_value = (SimpleNamespace(returncode=1), 'out', 'err')
+
+            self.assertIsNone(engine_stategraph.resource_summary(self._state(), {}))
+
+    def test_returns_none_when_stategraph_tf_show_prints_bad_json(self):
+        with mock.patch('engine_stategraph.cmd.run_with_output') as run:
+            run.return_value = (SimpleNamespace(returncode=0), 'not json', '')
+
+            self.assertIsNone(engine_stategraph.resource_summary(self._state(), {}))
+
+
+if __name__ == '__main__':
+    unittest.main()
