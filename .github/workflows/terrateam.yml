@@ -1,4 +1,5 @@
 name: 'Terrateam Workflow'
+run-name: "${{ inputs.run-type }} ${{ inputs.dirspaces }}"
 on:
   workflow_dispatch:
     inputs:
@@ -15,6 +16,10 @@ on:
         description: 'runs-on configuration'
         type: string
         default: '"ubuntu-latest"'
+      run-type:
+        default: ''
+      dirspaces:
+        default: ''
 jobs:
   terrateam:
     permissions: # Required to pass credentials to the Terrateam action
