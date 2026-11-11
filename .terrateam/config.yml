@@ -11,3 +11,6 @@ stacks:
         modified_by:
           - base
         auto_apply: true
+workflows:
+  - tag_query: ""
+    runs_on: "ubuntu-latest"
