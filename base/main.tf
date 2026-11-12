@@ -1,3 +1,3 @@
 resource "terraform_data" "base" {
-  input = "752-v135-1"
+  input = "752-v135-2"
 }
