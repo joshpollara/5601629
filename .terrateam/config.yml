@@ -11,3 +11,9 @@ stacks:
         modified_by:
           - base
         auto_apply: true
+engine:
+  name: terraform
+  version: 1.5.7
+workflows:
+  - tag_query: ""
+    runs_on: "ubuntu-latest"
