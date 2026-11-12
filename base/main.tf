@@ -1,3 +1,3 @@
 resource "terraform_data" "base" {
-  input = "752-fixed-2"
+  input = "752-fixed-3"
 }
