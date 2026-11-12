@@ -1,0 +1,18 @@
+automerge:
+  enabled: false
+apply_requirements:
+  checks:
+    - tag_query: ""
+      approved:
+        enabled: false
+      require_ready_for_review_pr: false
+stacks:
+  names:
+    base:
+      tag_query: 'dir:base'
+    database:
+      tag_query: 'dir:database'
+      rules:
+        modified_by:
+          - base
+        auto_apply: true
