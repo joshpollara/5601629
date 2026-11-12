@@ -86,3 +86,5 @@ workflows:
     - --skip-security
     type: plan
   tag_query: ''
+indexer:
+  enabled: true
