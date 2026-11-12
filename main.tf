@@ -1,13 +1,4 @@
-terraform {
-  required_version = ">= 1.5"
-
-  required_providers {
-    null = {
-      source  = "hashicorp/null"
-      version = "~> 3.2"
-    }
-  }
-}
+# Provider requirements and provider configuration live in providers.tf.
 
 variable "revision" {
   type    = string
