@@ -1,0 +1,88 @@
+dirs:
+  live/non-prod/us-east-1/qa/database:
+    when_modified:
+      depends_on: dir:live/non-prod/us-east-1/qa/network
+      file_patterns:
+      - ${DIR}/*.tf
+      - ${DIR}/*.tfvars
+      - ${DIR}/*.tfvars.json
+      - ${DIR}/terragrunt-module/*
+  live/non-prod/us-east-1/qa/network:
+    when_modified:
+      file_patterns:
+      - ${DIR}/*.tf
+      - ${DIR}/*.tfvars
+      - ${DIR}/*.tfvars.json
+      - ${DIR}/terragrunt-module/*
+  live/non-prod/us-east-1/qa/service:
+    when_modified:
+      depends_on: dir:live/non-prod/us-east-1/qa/database or dir:live/non-prod/us-east-1/qa/network
+      file_patterns:
+      - ${DIR}/*.tf
+      - ${DIR}/*.tfvars
+      - ${DIR}/*.tfvars.json
+      - ${DIR}/terragrunt-module/*
+  live/non-prod/us-east-1/stage/database:
+    when_modified:
+      depends_on: dir:live/non-prod/us-east-1/stage/network
+      file_patterns:
+      - ${DIR}/*.tf
+      - ${DIR}/*.tfvars
+      - ${DIR}/*.tfvars.json
+      - ${DIR}/terragrunt-module/*
+  live/non-prod/us-east-1/stage/network:
+    when_modified:
+      file_patterns:
+      - ${DIR}/*.tf
+      - ${DIR}/*.tfvars
+      - ${DIR}/*.tfvars.json
+      - ${DIR}/terragrunt-module/*
+  live/non-prod/us-east-1/stage/service:
+    when_modified:
+      depends_on: dir:live/non-prod/us-east-1/stage/database or dir:live/non-prod/us-east-1/stage/network
+      file_patterns:
+      - ${DIR}/*.tf
+      - ${DIR}/*.tfvars
+      - ${DIR}/*.tfvars.json
+      - ${DIR}/terragrunt-module/*
+  live/prod/us-east-1/prod/database:
+    when_modified:
+      depends_on: dir:live/prod/us-east-1/prod/network
+      file_patterns:
+      - ${DIR}/*.tf
+      - ${DIR}/*.tfvars
+      - ${DIR}/*.tfvars.json
+      - ${DIR}/terragrunt-module/*
+  live/prod/us-east-1/prod/network:
+    when_modified:
+      file_patterns:
+      - ${DIR}/*.tf
+      - ${DIR}/*.tfvars
+      - ${DIR}/*.tfvars.json
+      - ${DIR}/terragrunt-module/*
+  live/prod/us-east-1/prod/service:
+    when_modified:
+      depends_on: dir:live/prod/us-east-1/prod/database or dir:live/prod/us-east-1/prod/network
+      file_patterns:
+      - ${DIR}/*.tf
+      - ${DIR}/*.tfvars
+      - ${DIR}/*.tfvars.json
+      - ${DIR}/terragrunt-module/*
+engine:
+  name: stategraph
+  tf_cmd: tofu
+when_modified:
+  file_patterns: []
+workflows:
+- apply:
+  - type: init
+  - type: apply
+  plan:
+  - type: init
+  - extra_args:
+    - --force
+    - '*'
+    - --skip-costs
+    - --skip-security
+    type: plan
+  tag_query: ''

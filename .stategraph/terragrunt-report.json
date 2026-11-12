@@ -1,0 +1,978 @@
+{
+  "version": 1,
+  "terragrunt_root": ".",
+  "units": [
+    {
+      "path": "live/non-prod/us-east-1/qa/network",
+      "findings": [
+        {
+          "kind": "module_call",
+          "review": false,
+          "message": "module network calls ./terragrunt-module",
+          "items": [
+            {
+              "name": "./terragrunt-module",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "shared_inputs",
+          "review": false,
+          "message": "inputs in live/_envcommon/network.tfvars.json: azs",
+          "items": [
+            {
+              "name": "azs",
+              "file": "live/_envcommon/network.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "undeclared_inputs",
+          "review": false,
+          "message": "inputs that the module does not declare: account_id, account_name, environment, region",
+          "items": [
+            {
+              "name": "account_id",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "account_name",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "environment",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "region",
+              "file": "live/root.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "unconverted_arguments",
+          "review": true,
+          "message": "arguments of extra_arguments that are not converted: -lock-timeout=5m",
+          "items": [
+            {
+              "name": "-lock-timeout=5m",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "module_dir",
+          "review": false,
+          "message": "the generated files are code of the module; terragrunt-module holds them and links to the files of the module",
+          "items": [
+            {
+              "name": "generated.tf",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "backend_not_used",
+          "review": false,
+          "message": "the local backend is not used after the import",
+          "items": [
+            {
+              "name": "local",
+              "file": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "live/non-prod/us-east-1/stage/network",
+      "findings": [
+        {
+          "kind": "module_call",
+          "review": false,
+          "message": "module network calls ./terragrunt-module",
+          "items": [
+            {
+              "name": "./terragrunt-module",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "shared_inputs",
+          "review": false,
+          "message": "inputs in live/_envcommon/network.tfvars.json: azs",
+          "items": [
+            {
+              "name": "azs",
+              "file": "live/_envcommon/network.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "undeclared_inputs",
+          "review": false,
+          "message": "inputs that the module does not declare: account_id, account_name, environment, region",
+          "items": [
+            {
+              "name": "account_id",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "account_name",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "environment",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "region",
+              "file": "live/root.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "unconverted_arguments",
+          "review": true,
+          "message": "arguments of extra_arguments that are not converted: -lock-timeout=5m",
+          "items": [
+            {
+              "name": "-lock-timeout=5m",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "module_dir",
+          "review": false,
+          "message": "the generated files are code of the module; terragrunt-module holds them and links to the files of the module",
+          "items": [
+            {
+              "name": "generated.tf",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "backend_not_used",
+          "review": false,
+          "message": "the local backend is not used after the import",
+          "items": [
+            {
+              "name": "local",
+              "file": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "live/prod/us-east-1/prod/network",
+      "findings": [
+        {
+          "kind": "module_call",
+          "review": false,
+          "message": "module network calls ./terragrunt-module",
+          "items": [
+            {
+              "name": "./terragrunt-module",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "shared_inputs",
+          "review": false,
+          "message": "inputs in live/_envcommon/network.tfvars.json: azs",
+          "items": [
+            {
+              "name": "azs",
+              "file": "live/_envcommon/network.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "undeclared_inputs",
+          "review": false,
+          "message": "inputs that the module does not declare: account_id, account_name, environment, region",
+          "items": [
+            {
+              "name": "account_id",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "account_name",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "environment",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "region",
+              "file": "live/root.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "unconverted_arguments",
+          "review": true,
+          "message": "arguments of extra_arguments that are not converted: -lock-timeout=5m",
+          "items": [
+            {
+              "name": "-lock-timeout=5m",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "module_dir",
+          "review": false,
+          "message": "the generated files are code of the module; terragrunt-module holds them and links to the files of the module",
+          "items": [
+            {
+              "name": "generated.tf",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "backend_not_used",
+          "review": false,
+          "message": "the local backend is not used after the import",
+          "items": [
+            {
+              "name": "local",
+              "file": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "live/non-prod/us-east-1/qa/database",
+      "findings": [
+        {
+          "kind": "module_call",
+          "review": false,
+          "message": "module database calls ./terragrunt-module",
+          "items": [
+            {
+              "name": "./terragrunt-module",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "reads_state",
+          "review": false,
+          "message": "reads the state of live/non-prod/us-east-1/qa/network as data.terraform_remote_state.network_f5a9fb",
+          "items": [
+            {
+              "name": "live/non-prod/us-east-1/qa/network",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "passthrough_variables",
+          "review": true,
+          "message": "required variables with no input, kept as root variables: master_password",
+          "items": [
+            {
+              "name": "master_password",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "shared_inputs",
+          "review": false,
+          "message": "inputs in live/_envcommon/database.tfvars.json: allocated_storage, instance_class, master_username, storage_type",
+          "items": [
+            {
+              "name": "allocated_storage",
+              "file": "live/_envcommon/database.hcl"
+            },
+            {
+              "name": "instance_class",
+              "file": "live/_envcommon/database.hcl"
+            },
+            {
+              "name": "master_username",
+              "file": "live/_envcommon/database.hcl"
+            },
+            {
+              "name": "storage_type",
+              "file": "live/_envcommon/database.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "undeclared_inputs",
+          "review": false,
+          "message": "inputs that the module does not declare: account_id, account_name, environment, region",
+          "items": [
+            {
+              "name": "account_id",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "account_name",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "environment",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "region",
+              "file": "live/root.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "unconverted_arguments",
+          "review": true,
+          "message": "arguments of extra_arguments that are not converted: -lock-timeout=5m",
+          "items": [
+            {
+              "name": "-lock-timeout=5m",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "module_dir",
+          "review": false,
+          "message": "the generated files are code of the module; terragrunt-module holds them and links to the files of the module",
+          "items": [
+            {
+              "name": "generated.tf",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "backend_not_used",
+          "review": false,
+          "message": "the local backend is not used after the import",
+          "items": [
+            {
+              "name": "local",
+              "file": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "live/non-prod/us-east-1/stage/database",
+      "findings": [
+        {
+          "kind": "module_call",
+          "review": false,
+          "message": "module database calls ./terragrunt-module",
+          "items": [
+            {
+              "name": "./terragrunt-module",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "reads_state",
+          "review": false,
+          "message": "reads the state of live/non-prod/us-east-1/stage/network as data.terraform_remote_state.network_6b9cc3",
+          "items": [
+            {
+              "name": "live/non-prod/us-east-1/stage/network",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "passthrough_variables",
+          "review": true,
+          "message": "required variables with no input, kept as root variables: master_password",
+          "items": [
+            {
+              "name": "master_password",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "shared_inputs",
+          "review": false,
+          "message": "inputs in live/_envcommon/database.tfvars.json: allocated_storage, instance_class, master_username, storage_type",
+          "items": [
+            {
+              "name": "allocated_storage",
+              "file": "live/_envcommon/database.hcl"
+            },
+            {
+              "name": "instance_class",
+              "file": "live/_envcommon/database.hcl"
+            },
+            {
+              "name": "master_username",
+              "file": "live/_envcommon/database.hcl"
+            },
+            {
+              "name": "storage_type",
+              "file": "live/_envcommon/database.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "undeclared_inputs",
+          "review": false,
+          "message": "inputs that the module does not declare: account_id, account_name, environment, region",
+          "items": [
+            {
+              "name": "account_id",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "account_name",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "environment",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "region",
+              "file": "live/root.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "unconverted_arguments",
+          "review": true,
+          "message": "arguments of extra_arguments that are not converted: -lock-timeout=5m",
+          "items": [
+            {
+              "name": "-lock-timeout=5m",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "module_dir",
+          "review": false,
+          "message": "the generated files are code of the module; terragrunt-module holds them and links to the files of the module",
+          "items": [
+            {
+              "name": "generated.tf",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "backend_not_used",
+          "review": false,
+          "message": "the local backend is not used after the import",
+          "items": [
+            {
+              "name": "local",
+              "file": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "live/prod/us-east-1/prod/database",
+      "findings": [
+        {
+          "kind": "module_call",
+          "review": false,
+          "message": "module database calls ./terragrunt-module",
+          "items": [
+            {
+              "name": "./terragrunt-module",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "reads_state",
+          "review": false,
+          "message": "reads the state of live/prod/us-east-1/prod/network as data.terraform_remote_state.network_dfebcf",
+          "items": [
+            {
+              "name": "live/prod/us-east-1/prod/network",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "passthrough_variables",
+          "review": true,
+          "message": "required variables with no input, kept as root variables: master_password",
+          "items": [
+            {
+              "name": "master_password",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "shared_inputs",
+          "review": false,
+          "message": "inputs in live/_envcommon/database.tfvars.json: allocated_storage, instance_class, master_username, storage_type",
+          "items": [
+            {
+              "name": "allocated_storage",
+              "file": "live/_envcommon/database.hcl"
+            },
+            {
+              "name": "instance_class",
+              "file": "live/_envcommon/database.hcl"
+            },
+            {
+              "name": "master_username",
+              "file": "live/_envcommon/database.hcl"
+            },
+            {
+              "name": "storage_type",
+              "file": "live/_envcommon/database.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "undeclared_inputs",
+          "review": false,
+          "message": "inputs that the module does not declare: account_id, account_name, environment, region",
+          "items": [
+            {
+              "name": "account_id",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "account_name",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "environment",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "region",
+              "file": "live/root.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "unconverted_arguments",
+          "review": true,
+          "message": "arguments of extra_arguments that are not converted: -lock-timeout=5m",
+          "items": [
+            {
+              "name": "-lock-timeout=5m",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "module_dir",
+          "review": false,
+          "message": "the generated files are code of the module; terragrunt-module holds them and links to the files of the module",
+          "items": [
+            {
+              "name": "generated.tf",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "backend_not_used",
+          "review": false,
+          "message": "the local backend is not used after the import",
+          "items": [
+            {
+              "name": "local",
+              "file": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "live/non-prod/us-east-1/qa/service",
+      "findings": [
+        {
+          "kind": "module_call",
+          "review": false,
+          "message": "module service calls ./terragrunt-module",
+          "items": [
+            {
+              "name": "./terragrunt-module",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "reads_state",
+          "review": false,
+          "message": "reads the state of live/non-prod/us-east-1/qa/database as data.terraform_remote_state.database_7420cb",
+          "items": [
+            {
+              "name": "live/non-prod/us-east-1/qa/database",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "reads_state",
+          "review": false,
+          "message": "reads the state of live/non-prod/us-east-1/qa/network as data.terraform_remote_state.network_7420cb",
+          "items": [
+            {
+              "name": "live/non-prod/us-east-1/qa/network",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "shared_inputs",
+          "review": false,
+          "message": "inputs in live/_envcommon/service.tfvars.json: alb_port, instance_type, max_size, min_size, server_port",
+          "items": [
+            {
+              "name": "alb_port",
+              "file": "live/_envcommon/service.hcl"
+            },
+            {
+              "name": "instance_type",
+              "file": "live/_envcommon/service.hcl"
+            },
+            {
+              "name": "max_size",
+              "file": "live/_envcommon/service.hcl"
+            },
+            {
+              "name": "min_size",
+              "file": "live/_envcommon/service.hcl"
+            },
+            {
+              "name": "server_port",
+              "file": "live/_envcommon/service.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "undeclared_inputs",
+          "review": false,
+          "message": "inputs that the module does not declare: account_id, account_name, region",
+          "items": [
+            {
+              "name": "account_id",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "account_name",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "region",
+              "file": "live/root.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "kept_expressions",
+          "review": false,
+          "message": "inputs that keep their computation: service_cidr",
+          "items": [
+            {
+              "name": "service_cidr",
+              "file": "live/_envcommon/service.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "unconverted_arguments",
+          "review": true,
+          "message": "arguments of extra_arguments that are not converted: -lock-timeout=5m",
+          "items": [
+            {
+              "name": "-lock-timeout=5m",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "module_dir",
+          "review": false,
+          "message": "the generated files are code of the module; terragrunt-module holds them and links to the files of the module",
+          "items": [
+            {
+              "name": "generated.tf",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "backend_not_used",
+          "review": false,
+          "message": "the local backend is not used after the import",
+          "items": [
+            {
+              "name": "local",
+              "file": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "live/non-prod/us-east-1/stage/service",
+      "findings": [
+        {
+          "kind": "module_call",
+          "review": false,
+          "message": "module service calls ./terragrunt-module",
+          "items": [
+            {
+              "name": "./terragrunt-module",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "reads_state",
+          "review": false,
+          "message": "reads the state of live/non-prod/us-east-1/stage/database as data.terraform_remote_state.database_86d0c5",
+          "items": [
+            {
+              "name": "live/non-prod/us-east-1/stage/database",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "reads_state",
+          "review": false,
+          "message": "reads the state of live/non-prod/us-east-1/stage/network as data.terraform_remote_state.network_86d0c5",
+          "items": [
+            {
+              "name": "live/non-prod/us-east-1/stage/network",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "shared_inputs",
+          "review": false,
+          "message": "inputs in live/_envcommon/service.tfvars.json: alb_port, instance_type, max_size, min_size, server_port",
+          "items": [
+            {
+              "name": "alb_port",
+              "file": "live/_envcommon/service.hcl"
+            },
+            {
+              "name": "instance_type",
+              "file": "live/_envcommon/service.hcl"
+            },
+            {
+              "name": "max_size",
+              "file": "live/_envcommon/service.hcl"
+            },
+            {
+              "name": "min_size",
+              "file": "live/_envcommon/service.hcl"
+            },
+            {
+              "name": "server_port",
+              "file": "live/_envcommon/service.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "undeclared_inputs",
+          "review": false,
+          "message": "inputs that the module does not declare: account_id, account_name, region",
+          "items": [
+            {
+              "name": "account_id",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "account_name",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "region",
+              "file": "live/root.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "kept_expressions",
+          "review": false,
+          "message": "inputs that keep their computation: service_cidr",
+          "items": [
+            {
+              "name": "service_cidr",
+              "file": "live/_envcommon/service.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "unconverted_arguments",
+          "review": true,
+          "message": "arguments of extra_arguments that are not converted: -lock-timeout=5m",
+          "items": [
+            {
+              "name": "-lock-timeout=5m",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "module_dir",
+          "review": false,
+          "message": "the generated files are code of the module; terragrunt-module holds them and links to the files of the module",
+          "items": [
+            {
+              "name": "generated.tf",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "backend_not_used",
+          "review": false,
+          "message": "the local backend is not used after the import",
+          "items": [
+            {
+              "name": "local",
+              "file": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "path": "live/prod/us-east-1/prod/service",
+      "findings": [
+        {
+          "kind": "module_call",
+          "review": false,
+          "message": "module service calls ./terragrunt-module",
+          "items": [
+            {
+              "name": "./terragrunt-module",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "reads_state",
+          "review": false,
+          "message": "reads the state of live/prod/us-east-1/prod/database as data.terraform_remote_state.database_f48e75",
+          "items": [
+            {
+              "name": "live/prod/us-east-1/prod/database",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "reads_state",
+          "review": false,
+          "message": "reads the state of live/prod/us-east-1/prod/network as data.terraform_remote_state.network_f48e75",
+          "items": [
+            {
+              "name": "live/prod/us-east-1/prod/network",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "shared_inputs",
+          "review": false,
+          "message": "inputs in live/_envcommon/service.tfvars.json: alb_port, server_port",
+          "items": [
+            {
+              "name": "alb_port",
+              "file": "live/_envcommon/service.hcl"
+            },
+            {
+              "name": "server_port",
+              "file": "live/_envcommon/service.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "undeclared_inputs",
+          "review": false,
+          "message": "inputs that the module does not declare: account_id, account_name, region",
+          "items": [
+            {
+              "name": "account_id",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "account_name",
+              "file": "live/root.hcl"
+            },
+            {
+              "name": "region",
+              "file": "live/root.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "kept_expressions",
+          "review": false,
+          "message": "inputs that keep their computation: service_cidr",
+          "items": [
+            {
+              "name": "service_cidr",
+              "file": "live/_envcommon/service.hcl"
+            }
+          ]
+        },
+        {
+          "kind": "unconverted_arguments",
+          "review": true,
+          "message": "arguments of extra_arguments that are not converted: -lock-timeout=5m",
+          "items": [
+            {
+              "name": "-lock-timeout=5m",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "module_dir",
+          "review": false,
+          "message": "the generated files are code of the module; terragrunt-module holds them and links to the files of the module",
+          "items": [
+            {
+              "name": "generated.tf",
+              "file": null
+            }
+          ]
+        },
+        {
+          "kind": "backend_not_used",
+          "review": false,
+          "message": "the local backend is not used after the import",
+          "items": [
+            {
+              "name": "local",
+              "file": null
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
