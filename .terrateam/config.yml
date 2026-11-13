@@ -1,4 +1,5 @@
 apply_requirements:
+  apply_on_approval: true
   checks:
     - tag_query: ""
       approved:
