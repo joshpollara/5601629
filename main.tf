@@ -11,7 +11,7 @@ terraform {
 
 variable "revision" {
   type    = string
-  default = "3407-fixed"
+  default = "3407-control-a"
 }
 
 resource "null_resource" "marker" {
