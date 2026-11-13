@@ -11,7 +11,7 @@ terraform {
 
 variable "revision" {
   type    = string
-  default = "3407-control-b"
+  default = "add-read-replica"
 }
 
 resource "null_resource" "marker" {
