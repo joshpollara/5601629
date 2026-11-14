@@ -1,3 +1,7 @@
 resource "terraform_data" "base" {
-  input = "3"
+  input = "4"
+}
+
+resource "terraform_data" "extra" {
+  input = "2"
 }
