@@ -1,13 +1,18 @@
+engine:
+  name: tofu
+  version: 1.12.2
 automerge:
-  enabled: true
-  require_explicit_apply: true
-stacks:
+  enabled: false
+when_modified:
+  autoplan: false
+parameters:
   names:
-    base:
-      tag_query: 'dir:base'
-    database:
-      tag_query: 'dir:database'
-      rules:
-        modified_by:
-          - base
-        auto_apply: true
+    target: {}
+workflows:
+  - tag_query: ''
+    plan:
+      - type: run
+        capture_output: true
+        cmd: ['sh', '-c', 'echo -target=$target']
+      - type: init
+      - type: plan
