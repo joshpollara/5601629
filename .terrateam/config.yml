@@ -12,9 +12,3 @@ stacks:
           - base
         auto_apply: true
 
-access_control:
-  enabled: true
-  policies:
-    - tag_query: ''
-      plan: []
-      apply: []
