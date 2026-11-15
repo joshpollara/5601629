@@ -11,5 +11,5 @@ access_control:
     - tag_query: ''
       plan: ['*']
       apply: ['*']
-      target: ['*']
-      destroy: ['*']
+      target: []
+      destroy: []
