@@ -1,4 +1,3 @@
-=== .github/workflows/terrateam.yml
 name: 'Terrateam Workflow'
 on:
   workflow_dispatch:
