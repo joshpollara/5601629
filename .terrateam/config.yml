@@ -11,8 +11,6 @@ access_control:
     - tag_query: 'dir:base'
       plan: ['*']
       apply: ['*']
-      target: ['*']
-      destroy: ['*']
     - tag_query: 'dir:database'
       plan: ['*']
       apply: ['*']
