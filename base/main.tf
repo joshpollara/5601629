@@ -4,11 +4,11 @@ variable "tier" {
 }
 
 resource "terraform_data" "base" {
-  input = "2"
+  input = "3"
 }
 
 resource "terraform_data" "extra" {
-  input = "2"
+  input = "3"
 }
 
 output "tier" {
