@@ -1,18 +1,15 @@
-engine:
-  name: tofu
-  version: 1.12.2
 automerge:
-  enabled: false
-when_modified:
-  autoplan: false
-access_control:
   enabled: true
-  policies:
-    - tag_query: 'dir:base'
-      plan: ['*']
-      apply: ['*']
-      target: ['*']
-      destroy: ['*']
-    - tag_query: 'dir:database'
-      plan: ['*']
-      apply: ['*']
+  require_explicit_apply: true
+stacks:
+  names:
+    base:
+      tag_query: 'dir:base'
+    database:
+      tag_query: 'dir:database'
+      rules:
+        modified_by:
+          - base
+        auto_apply: true
+
+
