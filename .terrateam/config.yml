@@ -1,3 +1,2 @@
 when_modified:
-  autoplan: false
-  file_patterns: []
+  autoplan: true
