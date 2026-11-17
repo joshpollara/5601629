@@ -23,3 +23,5 @@ resource "null_resource" "marker" {
 output "revision" {
   value = null_resource.marker.triggers.revision
 }
+
+# rig 3519 broadcast check
