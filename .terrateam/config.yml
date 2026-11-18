@@ -1,44 +1,15 @@
-hooks:
-  plan:
-    pre:
-      - type: run
-        cmd:
-          - bash
-          - -ec
-          - |
-            curl -fsSL -o /usr/local/bin/wizcli https://downloads.wiz.io/v1/wizcli/1.85.0/wizcli-linux-amd64
-            echo 'd1ccb0d0619f6d6a1b546be50385c036198ad9d6b0ede99b93fa389fbe9664db  /usr/local/bin/wizcli' | sha256sum -c -
-            chmod +x /usr/local/bin/wizcli
-workflows:
-  - tag_query: 'dir:base'
-    plan:
-      - type: init
-      - type: plan
-      - type: run
-        cmd:
-          - bash
-          - -ec
-          - |
-            terraform show -json "$TERRATEAM_PLAN_FILE" > "$TERRATEAM_PLAN_FILE.tfplanjson"
-            wizcli scan dir "$TERRATEAM_PLAN_FILE.tfplanjson" \
-              --policies 'Default IaC policy' \
-              --name "$TERRATEAM_DIR ($TERRATEAM_WORKSPACE)" \
-              --no-color --no-style
-        visible_on: always
-  - tag_query: 'dir:database'
-    plan:
-      - type: init
-      - type: plan
-      - type: run
-        cmd:
-          - bash
-          - -ec
-          - |
-            terraform show -json "$TERRATEAM_PLAN_FILE" > "$TERRATEAM_PLAN_FILE.tfplanjson"
-            wizcli scan dir "$TERRATEAM_PLAN_FILE.tfplanjson" --policies 'Default IaC policy' --no-color --no-style
-        visible_on: always
-        on_error:
-          - type: gate
-            token: wiz-scan
-            any_of: ['user:joshpollara']
-            any_of_count: 1
+automerge:
+  enabled: true
+  require_explicit_apply: true
+stacks:
+  names:
+    base:
+      tag_query: 'dir:base'
+    database:
+      tag_query: 'dir:database'
+      rules:
+        modified_by:
+          - base
+        auto_apply: true
+
+
