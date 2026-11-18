@@ -1,7 +1,15 @@
-parallel_runs: 5
-work_manifests:
-  concurrent_runs: 10
-batch_runs:
+automerge:
   enabled: true
-  max_workspaces_per_batch: 5
-  merge_steps: by_phase
+  require_explicit_apply: true
+stacks:
+  names:
+    base:
+      tag_query: 'dir:base'
+    database:
+      tag_query: 'dir:database'
+      rules:
+        modified_by:
+          - base
+        auto_apply: true
+
+
