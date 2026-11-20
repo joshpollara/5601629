@@ -1,0 +1,76 @@
+# Converted from atmos.yaml by atmos-to-stategraph.py 1.0.0.
+# Read the conversion report before you commit this file.
+when_modified:
+  file_patterns: []
+  autoplan_draft_pr: true
+dirs:
+  components/terraform/app:
+    workspaces:
+      dev:
+        tags: [atmos, app, dev]
+        when_modified:
+          file_patterns:
+          - components/terraform/app/**
+          - stacks/deploy/dev.yaml
+          - stacks/catalog/defaults.yaml
+          - stacks/catalog/app.yaml
+          depends_on:
+            tag_query: (dir:components/terraform/network and workspace:dev)
+      prod:
+        tags: [atmos, app, prod]
+        when_modified:
+          file_patterns:
+          - components/terraform/app/**
+          - stacks/deploy/prod.yaml
+          - stacks/catalog/defaults.yaml
+          - stacks/catalog/app.yaml
+          depends_on:
+            tag_query: (dir:components/terraform/network and workspace:prod)
+  components/terraform/network:
+    workspaces:
+      dev:
+        tags: [atmos, network, dev]
+        when_modified:
+          file_patterns:
+          - components/terraform/network/**
+          - stacks/deploy/dev.yaml
+          - stacks/catalog/defaults.yaml
+          - stacks/catalog/network.yaml
+      dev-network-2:
+        tags: [atmos, network-2, dev]
+        when_modified:
+          file_patterns:
+          - components/terraform/network/**
+          - stacks/deploy/dev.yaml
+          - stacks/catalog/defaults.yaml
+          - stacks/catalog/network.yaml
+      prod:
+        tags: [atmos, network, prod]
+        when_modified:
+          file_patterns:
+          - components/terraform/network/**
+          - stacks/deploy/prod.yaml
+          - stacks/catalog/defaults.yaml
+          - stacks/catalog/network.yaml
+workflows:
+- tag_query: atmos
+  engine:
+    name: terraform
+    version: 1.5.7
+  plan:
+  - type: run
+    cmd: [python3, '${TERRATEAM_ROOT}/.stategraph/scripts/atmos-prepare.py']
+  - type: env
+    method: source
+    cmd: ['${TERRATEAM_ROOT}/${TERRATEAM_DIR}/.atmos.env']
+  - type: init
+  - type: plan
+    extra_args: [-var-file=atmos.tfvars.json]
+  apply:
+  - type: run
+    cmd: [python3, '${TERRATEAM_ROOT}/.stategraph/scripts/atmos-prepare.py']
+  - type: env
+    method: source
+    cmd: ['${TERRATEAM_ROOT}/${TERRATEAM_DIR}/.atmos.env']
+  - type: init
+  - type: apply
