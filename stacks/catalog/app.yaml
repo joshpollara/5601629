@@ -1,0 +1,10 @@
+components:
+  terraform:
+    app:
+      vars:
+        name: checkout
+      env:
+        TF_VAR_greeting: hello from the Atmos env section
+      dependencies:
+        components:
+          - name: network
