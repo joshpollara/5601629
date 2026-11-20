@@ -1,0 +1,33 @@
+{
+  "atmos_dir": ".",
+  "atmos_version": "1.234.1",
+  "base_path": ".",
+  "generate_backend": true,
+  "instances": {
+    "components/terraform/app": {
+      "dev": {
+        "component": "app",
+        "stack": "dev"
+      },
+      "prod": {
+        "component": "app",
+        "stack": "prod"
+      }
+    },
+    "components/terraform/network": {
+      "dev": {
+        "component": "network",
+        "stack": "dev"
+      },
+      "dev-network-2": {
+        "component": "network-2",
+        "stack": "dev"
+      },
+      "prod": {
+        "component": "network",
+        "stack": "prod"
+      }
+    }
+  },
+  "static": false
+}
