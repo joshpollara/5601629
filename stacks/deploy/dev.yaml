@@ -1,0 +1,19 @@
+import:
+  - catalog/defaults
+  - catalog/network
+  - catalog/app
+
+vars:
+  stage: dev
+
+components:
+  terraform:
+    network:
+      vars:
+        cidr_block: 10.10.0.0/16
+
+    network-2:
+      metadata:
+        component: network
+      vars:
+        cidr_block: 10.11.0.0/16
