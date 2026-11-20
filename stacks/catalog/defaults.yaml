@@ -1,0 +1,7 @@
+terraform:
+  backend_type: local
+  backend:
+    local: {}
+  dependencies:
+    tools:
+      terraform: "1.5.7"
