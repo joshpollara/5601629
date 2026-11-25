@@ -8,5 +8,5 @@ hooks:
     pre:
     - cmd:
       - 'sleep'
-      - '75'
+      - '120'
       type: run
