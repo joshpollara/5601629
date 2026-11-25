@@ -1,12 +1,15 @@
-config_builder:
+automerge:
   enabled: true
-  script: |
-    #! /usr/bin/env bash
-    echo '{}'
-hooks:
-  plan:
-    pre:
-    - cmd:
-      - 'sleep'
-      - '120'
-      type: run
+  require_explicit_apply: true
+stacks:
+  names:
+    base:
+      tag_query: 'dir:base'
+    database:
+      tag_query: 'dir:database'
+      rules:
+        modified_by:
+          - base
+        auto_apply: true
+
+
