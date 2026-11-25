@@ -1,9 +1,4 @@
-# rig 3749 fixedon
-config_builder:
-  enabled: true
-  script: |
-    #! /usr/bin/env bash
-    echo '{}'
+# rig 3749 control
 drift:
   enabled: true
   schedules:
