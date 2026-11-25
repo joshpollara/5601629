@@ -1,9 +1,15 @@
-# rig 3749 control
-drift:
+automerge:
   enabled: true
-  schedules:
-    default:
-      reconcile: false
-      restart_on_change: true
-      schedule: hourly
-      tag_query: ''
+  require_explicit_apply: true
+stacks:
+  names:
+    base:
+      tag_query: 'dir:base'
+    database:
+      tag_query: 'dir:database'
+      rules:
+        modified_by:
+          - base
+        auto_apply: true
+
+
