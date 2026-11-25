@@ -1,4 +1,4 @@
-# rig 3749 baseline 2
+# rig 3749 fixed
 config_builder:
   enabled: true
   script: |
